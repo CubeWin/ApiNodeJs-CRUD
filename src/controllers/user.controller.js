@@ -2,6 +2,18 @@ const userController = {};
 // Models
 const User = require('../models/User');
 const Person = require('../models/Person');
+const passport = require('passport');
+/**
+ * @sigin
+ */
+userController.signin = passport.authenticate('local', {
+    failureRedirect: "/",
+    successRedirect: '/api/person'
+});
+userController.logout = (req, res)=>{
+    req.logout();
+    res.redirect('/');
+};
 /**
  * @create
  */
@@ -53,20 +65,12 @@ userController.updateUser = async (req, res) => {
     const { password, repeat_password } = req.body;
     const id = req.params.id;
     const errors = [];
-    // if (!id_persona) { errors.push({ text: "Please write a id_persona" }) };
-    // if (!user) { errors.push({ text: "Please write a user" }) };
     if (!password) { errors.push({ text: "Please write a pasword" }) };
     if (password.length <= 4) { errors.push({ text: "Please write a pasword of min-length 4" }) };
     if (password != repeat_password) { errors.push({ text: "Please repeat password" }) };
     if (errors.length > 0) {
         res.json(errors);
     } else {
-        // const findPerson = await Person.findById(id_persona);
-        // const findUser = await User.findOne({ user: user });
-        // if (findPerson) {
-        // if (findUser) {
-        //     res.json({ "fail": "El usuario ya esta en uso" });
-        // } else {
         const newUser = new User({ password });
         newUser.password = await newUser.encryptPassword(password);
         const validUpdate = await User.findByIdAndUpdate(id, { $set: { "password": newUser.password } });
@@ -75,10 +79,6 @@ userController.updateUser = async (req, res) => {
         } else {
             res.json({ "fail": "No se actualizo correctamente" });
         }
-        // }
-        // } else {
-        //     res.json({ "fail": "No se encontro la persona" });
-        // }
     }
 };
 /**

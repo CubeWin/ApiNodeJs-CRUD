@@ -38,8 +38,21 @@ personController.readOnePerson = async (req, res) => {
 personController.updatePerson = async (req, res) => {
     const { name, surname, telephone, email, gender } = req.body;
     const id = req.params.id;
-    await Person.findByIdAndUpdate(id, { name, surname, telephone, email, gender });
-    res.json({"success":"Se actualizo correctamente"});
+    if (!name) { errors.push({ text: "Please write a name" }); }
+    if (!surname) { errors.push({ text: "Please write a surname" }); }
+    if (!telephone) { errors.push({ text: "Please write a telephone" }); }
+    if (!email) { errors.push({ text: "Please write a email" }); }
+    if (!gender) { errors.push({ text: "Please write a gender" }); }
+    if (errors.length > 0) {
+        res.json(errors);
+    } else {
+        const validUpdate = await Person.findByIdAndUpdate(id, { name, surname, telephone, email, gender });
+        if (validUpdate) {
+            res.json({ "success": "Se actualizo correctamente" });
+        } else {
+            res.json({ "fail": "No se actualizo correctamente" });
+        }
+    }
 };
 /**
  * @delete

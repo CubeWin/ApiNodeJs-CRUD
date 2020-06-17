@@ -8,27 +8,35 @@ const {
     readUser,
     readOneUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    signin,
+    logout
 } = require('../controllers/user.controller');
+const { isAuthenticated } = require('../helpers/auth');
+/**
+ * ?Sigin and logout
+ */
+router.post('/signin', signin);
+router.post('/logout', logout)
 /**
  * @New
  */
-router.post('/create', createUser);
+router.post('/create', isAuthenticated, createUser);
 /**
  * @GetAll
  */
-router.get('/', readUser);
+router.get('/', isAuthenticated, readUser);
 /**
  * @GetOne
  */
-router.get('/:id', readOneUser);
+router.get('/:id', isAuthenticated, readOneUser);
 /**
- * @Edit
+ * @Edit only change password
  */
-router.put('/update/:id', updateUser);
+router.put('/update/:id', isAuthenticated, updateUser);
 /**
  * @Delete
  */
-router.delete('/delete/:id', deleteUser);
+router.delete('/delete/:id', isAuthenticated, deleteUser);
 // Export
 module.exports = router;

@@ -1,11 +1,15 @@
 const express = require('express');
 const path = require('path');
+const methodOverride = require('method-override');
 const morgan = require('morgan');
+const session = require('express-session');
+const passport = require('passport');
 
 /**
  * @Initializations
  */
 const app = express();
+require('./config/passport');
 
 /**
  * @settings
@@ -19,11 +23,23 @@ app.set('json spaces', 2);
  */
 app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: false }));
+app.use(methodOverride('_method'));
 app.use(express.json());
+app.use(session({
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: true
+}))
+app.use(passport.initialize());
+app.use(passport.session());
 
 /**
  * @GlovalVariable
  */
+app.use((req, res, next) => {
+    res.locals.user = req.user || null;
+    next();
+});
 
 /**
  * @Routes

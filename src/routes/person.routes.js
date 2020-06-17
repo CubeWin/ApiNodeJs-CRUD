@@ -10,25 +10,26 @@ const {
     updatePerson,
     deletePerson
 } = require('../controllers/person.controller');
+const { isAuthenticated } = require('../helpers/auth');
 /**
  * @New
  */
-router.post('/create', createPerson);
+router.post('/create', isAuthenticated, createPerson);
 /**
  * @GetAll
  */
-router.get('/', readPerson);
+router.get('/', isAuthenticated, readPerson);
 /**
  * @GetOne
  */
-router.get('/:id', readOnePerson);
+router.get('/:id', isAuthenticated, readOnePerson);
 /**
  * @Edit
  */
-router.put('/update/:id', updatePerson);
+router.put('/update/:id', isAuthenticated, updatePerson);
 /**
  * @Delete
  */
-router.delete('/delete/:id', deletePerson);
+router.delete('/delete/:id', isAuthenticated, deletePerson);
 // Export
 module.exports = router;
